@@ -59,6 +59,7 @@ jobs:
 
     - name: Update the release tag
       run: |
+        cd openwrt
         echo "release_tag=$(git log -1 --format=%cd --date=format:%Y%m%d)-$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
 
     - name: Load custom feeds
