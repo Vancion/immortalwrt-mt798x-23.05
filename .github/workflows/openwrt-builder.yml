@@ -57,6 +57,10 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
+    - name: Update the release tag
+      run: |
+        echo "release_tag=$(git log -1 --format=%cd --date=format:%Y%m%d)-$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -129,7 +133,6 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(git log -1 --format=%cd --date=format:%Y%m%d)-$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
         touch release.txt
         [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
